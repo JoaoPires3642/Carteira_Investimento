@@ -2,7 +2,7 @@ namespace InvestidorCarteira.Domain.Entities
 {
 public class Criptomoedas : Ativos
 {
-    public Criptomoedas(string ticker, int quantidade, decimal precoPago) : base(ticker, quantidade, precoPago)
+    public Criptomoedas(string ticker, decimal quantidade, decimal precoPago) : base(ticker, quantidade, precoPago)
     {
     }
 

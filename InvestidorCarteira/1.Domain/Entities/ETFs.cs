@@ -2,7 +2,7 @@ namespace InvestidorCarteira.Domain.Entities
 {
 public class ETFs : Ativos
 {
-    public ETFs(string ticker, int quantidade, decimal precoPago) : base(ticker, quantidade, precoPago)
+    public ETFs(string ticker, decimal quantidade, decimal precoPago) : base(ticker, quantidade, precoPago)
     {
     }
 

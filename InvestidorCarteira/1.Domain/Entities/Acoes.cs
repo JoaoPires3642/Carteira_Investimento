@@ -2,7 +2,7 @@ namespace InvestidorCarteira.Domain.Entities;
 
 public class Acoes : Ativos
 {
-    public Acoes(string ticker, int quantidade, decimal precoPago) : base(ticker, quantidade, precoPago)
+    public Acoes(string ticker, decimal quantidade, decimal precoPago) : base(ticker, quantidade, precoPago)
     {
     }
     public override decimal CalcularImpostoEstimado(decimal valorVenda, decimal vendaTotalNoMes, bool isDayTrade)

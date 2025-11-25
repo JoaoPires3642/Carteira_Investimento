@@ -2,7 +2,7 @@ namespace InvestidorCarteira.Domain.Entities;
 
 public class FIIs : Ativos
 {
-    public FIIs(string ticker, int quantidade, decimal precoPago) : base(ticker, quantidade, precoPago)
+    public FIIs(string ticker, decimal quantidade, decimal precoPago) : base(ticker, quantidade, precoPago)
     {
     }
 

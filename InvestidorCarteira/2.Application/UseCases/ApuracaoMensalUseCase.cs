@@ -36,11 +36,11 @@ namespace InvestidorCarteira.Application.UseCases
         {
             return op.Tipo switch
             {
-                TipoAtivo.Acoes => new Acoes(op.Ticker, op.Quantidade, op.PrecoMedio),
-                TipoAtivo.FII => new FIIs(op.Ticker, op.Quantidade, op.PrecoMedio),
-                TipoAtivo.ETF => new ETFs(op.Ticker, op.Quantidade, op.PrecoMedio),
-                TipoAtivo.Cripto => new Criptomoedas(op.Ticker, op.Quantidade, op.PrecoMedio),
-                _ => new Acoes(op.Ticker, op.Quantidade, op.PrecoMedio),
+                TipoAtivo.Acoes => new Acoes(op.Ticker, op.Quantidade, op.PrecoMedioHistorico),
+                TipoAtivo.FII => new FIIs(op.Ticker, op.Quantidade, op.PrecoMedioHistorico),
+                TipoAtivo.ETF => new ETFs(op.Ticker, op.Quantidade, op.PrecoMedioHistorico),
+                TipoAtivo.Cripto => new Criptomoedas(op.Ticker, op.Quantidade, op.PrecoMedioHistorico),
+                _ => new Acoes(op.Ticker, op.Quantidade, op.PrecoMedioHistorico),
             };
         }
     }

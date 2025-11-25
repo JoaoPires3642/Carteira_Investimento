@@ -8,7 +8,7 @@ public abstract class Ativos{
     public decimal Quantidade { get; private set;}
     public decimal PrecoMedio { get; private set; }
 
-   protected Ativos(string ticker, int quantidade, decimal precoPago)
+   protected Ativos(string ticker, decimal quantidade, decimal precoPago)
         {
             if (string.IsNullOrWhiteSpace(ticker))
                 throw new ArgumentException("Ticker não pode ser vazio");
