@@ -6,6 +6,6 @@
     <RootNamespace>InvestidorCarteira.Application</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\\Domain\\InvestidorCarteira.Domain.csproj" />
+    <ProjectReference Include="..\\1.Domain\\InvestidorCarteira.Domain.csproj" />
   </ItemGroup>
 </Project>
