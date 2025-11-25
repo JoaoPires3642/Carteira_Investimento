@@ -3,6 +3,7 @@ using InvestidorCarteira.Application.UseCases;
 using InvestidorCarteira.Infrastructure; // Importante para achar a Injeção
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
 
 // 2. Adiciona serviços ao container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+.AddJsonOptions(options =>
+    {
+        // Permite enviar "Acoes" no JSON em vez de 0
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 // Adiciona o Swagger (Documentação automática)
 builder.Services.AddEndpointsApiExplorer();
