@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>InvestidorCarteira.Presentation.ConsoleApp</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\\Application\\InvestidorCarteira.Application.csproj" />
+    <ProjectReference Include="..\\Infrastructure\\InvestidorCarteira.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
