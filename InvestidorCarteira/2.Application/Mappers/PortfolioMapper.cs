@@ -1,9 +1,11 @@
-namespace InvestidorCarteira.Application.Mappers;
 using InvestidorCarteira.Domain.Entities;
 using InvestidorCarteira.Application.DTOs;
-public static class PortfolioMapper
 
-//Converter de entidade para dto
+namespace InvestidorCarteira.Application.Mappers;
+
+public static class PortfolioMapper
 {
-    public static PortfolioDto ToDto(Portfolio entity) => new(entity.Id, entity.Nome);
+    // Converte entidade `Portfolio` para `PortfolioDto`.
+    public static PortfolioDto ToDto(Portfolio entity)
+        => new(entity.Id.ToString(), entity.NomeTitular);
 }

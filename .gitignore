@@ -16,3 +16,11 @@ ehthumbs.db
 *.nupkg
 *.snupkg
 node_modules/
+# Ignorar arquivos de banco de dados SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Ignore local tool installs and config directories
+.tools/
+.Config/

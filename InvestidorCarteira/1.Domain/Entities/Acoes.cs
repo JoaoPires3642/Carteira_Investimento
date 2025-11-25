@@ -5,6 +5,11 @@ public class Acoes : Ativos
     public Acoes(string ticker, decimal quantidade, decimal precoPago) : base(ticker, quantidade, precoPago)
     {
     }
+    
+    // Construtor sem parâmetros para EF Core
+    protected Acoes() : base()
+    {
+    }
     public override decimal CalcularImpostoEstimado(decimal valorVenda, decimal vendaTotalNoMes, bool isDayTrade)
     {
         decimal custoTotal = Quantidade * PrecoMedio;

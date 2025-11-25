@@ -22,6 +22,11 @@ public abstract class Ativos{
             PrecoMedio = precoPago;
         }
 
+        // Construtor sem parâmetros necessário para o EF Core materializar a entidade.
+        protected Ativos()
+        {
+        }
+
         // Regra de Negócio: Comprar mais muda o preço médio
         public void RegistrarCompra(int novaQuantidade, decimal novoPreco)
         {
