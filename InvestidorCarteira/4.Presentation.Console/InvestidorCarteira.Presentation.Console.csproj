@@ -7,7 +7,7 @@
     <RootNamespace>InvestidorCarteira.Presentation.ConsoleApp</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\\Application\\InvestidorCarteira.Application.csproj" />
-    <ProjectReference Include="..\\Infrastructure\\InvestidorCarteira.Infrastructure.csproj" />
+    <ProjectReference Include="..\\2.Application\\InvestidorCarteira.Application.csproj" />
+    <ProjectReference Include="..\\3.Infrastructure\\InvestidorCarteira.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
