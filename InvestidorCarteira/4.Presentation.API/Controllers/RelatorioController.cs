@@ -1,4 +1,4 @@
-using InvestidorCarteira.Application.UseCases;
+using InvestidorCarteira.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvestidorCarteira.API.Controllers
@@ -7,9 +7,9 @@ namespace InvestidorCarteira.API.Controllers
     [Route("api/[controller]")]
     public class RelatorioController : ControllerBase
     {
-        private readonly GerarRelatorioImpostoUseCase _useCase;
+        private readonly IGerarRelatorioImpostoUseCase _useCase;
 
-        public RelatorioController(GerarRelatorioImpostoUseCase useCase)
+        public RelatorioController(IGerarRelatorioImpostoUseCase useCase)
         {
             _useCase = useCase;
         }

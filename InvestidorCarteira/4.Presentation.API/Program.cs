@@ -1,3 +1,5 @@
+using InvestidorCarteira.Application.Interfaces;
+using InvestidorCarteira.Application.UseCases;
 using InvestidorCarteira.Infrastructure; // Importante para achar a Injeção
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
@@ -17,6 +19,11 @@ builder.Services.AddSwaggerGen();
 
 // Conectamos sua Infraestrutura (Banco SQLite) na API
 builder.Services.AddInfrastructure(); 
+
+// Registra os UseCases
+builder.Services.AddScoped<ApuracaoMensalUseCase>();
+builder.Services.AddScoped<IGerarRelatorioImpostoUseCase, GerarRelatorioImpostoUseCase>();
+builder.Services.AddScoped<GetPortfolioByIdUseCase>();
 // ---------------------------
 
 var app = builder.Build();

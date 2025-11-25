@@ -1,10 +1,11 @@
 using InvestidorCarteira.Application.DTOs;
+using InvestidorCarteira.Application.Interfaces;
 using InvestidorCarteira.Domain.Enums;
 using InvestidorCarteira.Domain.Interfaces;
 
 namespace InvestidorCarteira.Application.UseCases
 {
-    public class GerarRelatorioImpostoUseCase
+    public class GerarRelatorioImpostoUseCase : IGerarRelatorioImpostoUseCase
     {
         private readonly IPortfolioRepository _repo;
         private readonly ApuracaoMensalUseCase _calculadora;

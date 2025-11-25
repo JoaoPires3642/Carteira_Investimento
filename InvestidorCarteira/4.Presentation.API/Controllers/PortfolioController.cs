@@ -98,6 +98,11 @@ namespace InvestidorCarteira.API.Controllers
                 // Erros de regra de negócio (Saldo insuficiente, ativo não existe)
                 return BadRequest(ex.Message);
             }
+            catch (Exception ex)
+            {
+                // Outros erros de regra de negócio
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
