@@ -10,5 +10,6 @@ namespace InvestidorCarteira.Domain.Interfaces
         Task AtualizarAsync(Portfolio portfolio);
         // Novo método para listar todos os portfolios
          Task<IEnumerable<Portfolio>> ListarTodosAsync();
+         Task<Portfolio?> ObterPorIdComTransacoesAsync(Guid id);
     }
 }

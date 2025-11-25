@@ -15,6 +15,7 @@ namespace InvestidorCarteira.Infrastructure.Persistence
         // O EF Core entende que eles são filhos de 'Ativos'.
         public DbSet<Portfolio> Portfolios { get; set; }
         public DbSet<Ativos> Ativos { get; set; }
+        public DbSet<Transacao> Transacoes { get; set; }
 
         // Configurações detalhadas das tabelas
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,13 +43,38 @@ namespace InvestidorCarteira.Infrastructure.Persistence
             modelBuilder.Entity<Ativos>()
                 .Property(a => a.Quantidade)
                 .HasPrecision(18, 8); // 0.00000450 BTC
-
             // 3. Relacionamento: Portfolio tem muitos Ativos
             // Isso garante que se apagar o Portfolio, apaga os ativos dele (Cascade)
             modelBuilder.Entity<Portfolio>()
                 .HasMany(p => p.Ativos)
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
-        }
-    }
+
+            // 3b. Relacionamento: Portfolio tem muitas Transacoes
+            // Permite que o EF rastreie transações adicionadas à coleção e faça INSERTs.
+            modelBuilder.Entity<Portfolio>()
+                .HasMany(p => p.Transacoes)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+
+                // Configuração da Transação
+    modelBuilder.Entity<Portfolio>()
+        .HasMany(p => p.Transacoes) // Portfolio tem muitas Transações
+        .WithOne()
+        .OnDelete(DeleteBehavior.Cascade);
+
+modelBuilder.Entity<Transacao>()
+        .Property(t => t.Id)
+        .ValueGeneratedNever();
+
+    modelBuilder.Entity<Transacao>()
+        .Property(t => t.PrecoUnitario)
+        .HasPrecision(18, 2);
+
+    modelBuilder.Entity<Transacao>()
+        .Property(t => t.PrecoMedioNaData)
+        .HasPrecision(18, 2);
 }
+        }
+        
+    }

@@ -12,8 +12,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InvestidorCarteira\2.Application\InvestidorCarteira.Application.csproj" />
-    <ProjectReference Include="..\InvestidorCarteira\3.Infrastructure\InvestidorCarteira.Infrastructure.csproj" />
+    <ProjectReference Include="..\\2.Application\\InvestidorCarteira.Application.csproj" />
+    <ProjectReference Include="..\\3.Infrastructure\\InvestidorCarteira.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

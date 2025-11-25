@@ -1,5 +1,6 @@
 using InvestidorCarteira.Application.DTOs;
 using InvestidorCarteira.Domain.Entities;
+using InvestidorCarteira.Domain.Enums;
 
 namespace InvestidorCarteira.Application.UseCases
 {
@@ -34,13 +35,16 @@ namespace InvestidorCarteira.Application.UseCases
 
         private Ativos CriarAtivoParaOperacao(OperationDto op)
         {
+            // Converte Quantidade para decimal quando necessário
+            decimal quantidadeDecimal = (decimal)op.Quantidade;
+
             return op.Tipo switch
             {
-                TipoAtivo.Acoes => new Acoes(op.Ticker, op.Quantidade, op.PrecoMedioHistorico),
-                TipoAtivo.FII => new FIIs(op.Ticker, op.Quantidade, op.PrecoMedioHistorico),
-                TipoAtivo.ETF => new ETFs(op.Ticker, op.Quantidade, op.PrecoMedioHistorico),
-                TipoAtivo.Cripto => new Criptomoedas(op.Ticker, op.Quantidade, op.PrecoMedioHistorico),
-                _ => new Acoes(op.Ticker, op.Quantidade, op.PrecoMedioHistorico),
+                TipoAtivo.Acoes => new Acoes(op.Ticker, quantidadeDecimal, op.PrecoMedioHistorico),
+                TipoAtivo.FIIs => new FIIs(op.Ticker, quantidadeDecimal, op.PrecoMedioHistorico),
+                TipoAtivo.ETFs => new ETFs(op.Ticker, quantidadeDecimal, op.PrecoMedioHistorico),
+                TipoAtivo.Criptomoedas => new Criptomoedas(op.Ticker, quantidadeDecimal, op.PrecoMedioHistorico),
+                _ => new Acoes(op.Ticker, quantidadeDecimal, op.PrecoMedioHistorico),
             };
         }
     }

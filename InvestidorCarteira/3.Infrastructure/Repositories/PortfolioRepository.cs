@@ -27,20 +27,41 @@ namespace InvestidorCarteira.Infrastructure.Repositories
         {
             // ATENÇÃO AQUI: .Include()
             // Sem isso, a lista de ativos viria vazia.
-            return await _context.Portfolios
-                .Include(p => p.Ativos) 
+          return await _context.Portfolios
+                .Include(p => p.Ativos)      
+                .Include(p => p.Transacoes)  //registrar histórico
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task AtualizarAsync(Portfolio portfolio)
         {
-            _context.Portfolios.Update(portfolio);
-            await _context.SaveChangesAsync();
-        }
+            
+            foreach (var transacao in portfolio.Transacoes)
+            {
+                // Verifica se o EF já está rastreando essa transação
+                var entry = _context.Entry(transacao);
 
+                if (entry.State == EntityState.Unchanged) 
+            continue;
+
+        // Se o estado for 'Detached' (o EF não conhece), aí sim marcamos como Added.
+        if (entry.State == EntityState.Detached)
+        {
+            entry.State = EntityState.Added;
+        }
+    }
+
+    await _context.SaveChangesAsync();
+}
         public Task<IEnumerable<Portfolio>> ListarTodosAsync()
         {
             throw new NotImplementedException();
         }
+        public async Task<Portfolio?> ObterPorIdComTransacoesAsync(Guid id)
+{
+    return await _context.Portfolios
+        .Include(p => p.Transacoes) 
+        .FirstOrDefaultAsync(p => p.Id == id);
+}
     }
 }

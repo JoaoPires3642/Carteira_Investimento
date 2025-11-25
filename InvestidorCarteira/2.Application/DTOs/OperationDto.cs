@@ -1,15 +1,8 @@
 using System;
+using InvestidorCarteira.Domain.Enums;
 
 namespace InvestidorCarteira.Application.DTOs
 {
-    public enum TipoAtivo
-    {
-        Acoes,
-        FII,
-        ETF,
-        Cripto
-    }
-
     public class OperationDto
     {
         public DateTime Date { get; set; }
