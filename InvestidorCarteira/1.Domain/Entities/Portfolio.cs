@@ -1,5 +1,7 @@
 namespace InvestidorCarteira.Domain.Entities;
 public class Portfolio
+
+// model pode existir uma interface 
 {
     public string Id { get; }
     public string Nome { get; }

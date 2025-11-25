@@ -1,6 +1,11 @@
 namespace InvestidorCarteira.Infrastructure.Repositories;
 using InvestidorCarteira.Application.Ports;
 using InvestidorCarteira.Domain.Entities;
+
+
+
+
+
 public class InMemoryPortfolioRepository : IPortfolioRepository
 {
     private readonly Dictionary<string, Portfolio> _store = new();
