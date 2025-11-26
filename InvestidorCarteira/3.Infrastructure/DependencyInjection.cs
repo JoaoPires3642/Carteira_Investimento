@@ -3,6 +3,7 @@ using InvestidorCarteira.Domain.Interfaces;
 using InvestidorCarteira.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using InvestidorCarteira.Infrastructure.Services;
 
 namespace InvestidorCarteira.Infrastructure
 {
@@ -19,6 +20,7 @@ namespace InvestidorCarteira.Infrastructure
             // "Sempre que alguém pedir IPortfolioRepository, entregue o PortfolioRepository"
             // Scoped = Uma instância por requisição HTTP (o padrão para Repositórios)
              services.AddScoped<IPortfolioRepository, PortfolioRepository>();
+             services.AddScoped<IMarketDataService, YahooFinanceService>();
             
 
             return services;

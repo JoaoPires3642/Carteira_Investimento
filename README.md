@@ -3,7 +3,7 @@
 Este guia descreve como rodar o backend (.NET) e o frontend (Next.js) em ambiente local no Windows.
 
 ## Pré-requisitos
-- .NET SDK 10.0 ou superior
+- .NET SDK 10.0 ou superior (o projeto Infrastructure requer .NET 10.0)
 - Node.js 18+ (recomendado 20+) e npm
 - PowerShell com permissão para executar scripts na sessão atual
 
