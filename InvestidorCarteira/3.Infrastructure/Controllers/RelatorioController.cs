@@ -8,10 +8,12 @@ namespace InvestidorCarteira.Infrastructure.Controllers
     public class RelatorioController : ControllerBase
     {
         private readonly IGerarRelatorioImpostoUseCase _useCase;
+        private readonly IObterDashboardUseCase _dashboardUseCase;
 
-        public RelatorioController(IGerarRelatorioImpostoUseCase useCase)
+        public RelatorioController(IGerarRelatorioImpostoUseCase useCase, IObterDashboardUseCase dashboardUseCase)
         {
             _useCase = useCase;
+            _dashboardUseCase = dashboardUseCase;
         }
 
         [HttpGet("{portfolioId}/{ano}/{mes}")]
@@ -27,5 +29,20 @@ namespace InvestidorCarteira.Infrastructure.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        
+        [HttpGet("{portfolioId}/dashboard")]
+public async Task<IActionResult> ObterDashboard(Guid portfolioId)
+{
+    try 
+    {
+        var result = await _dashboardUseCase.Executar(portfolioId);
+        return Ok(result);
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(ex.Message);
+    }
+}
     }
 }

@@ -21,6 +21,7 @@ namespace InvestidorCarteira.Infrastructure
             // Scoped = Uma instância por requisição HTTP (o padrão para Repositórios)
              services.AddScoped<IPortfolioRepository, PortfolioRepository>();
              services.AddScoped<IMarketDataService, YahooFinanceService>();
+             services.AddScoped<InvestidorCarteira.Application.Interfaces.IObterDashboardUseCase, InvestidorCarteira.Application.UseCases.ObterDashboardUseCase>();
             
 
             return services;

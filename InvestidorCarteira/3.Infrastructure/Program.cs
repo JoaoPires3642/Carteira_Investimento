@@ -16,6 +16,7 @@ CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
 
 // 2. Adiciona serviços ao container.
 builder.Services.AddControllers()
+
 .AddJsonOptions(options =>
     {
         // Permite enviar "Acoes" no JSON em vez de 0
@@ -25,6 +26,7 @@ builder.Services.AddControllers()
 // Adiciona o Swagger (Documentação automática)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 
 // Conectamos sua Infraestrutura (Banco SQLite) na API
@@ -48,6 +50,7 @@ builder.Services.AddScoped<ApuracaoMensalUseCase>();
 builder.Services.AddScoped<IGerarRelatorioImpostoUseCase, GerarRelatorioImpostoUseCase>();
 builder.Services.AddScoped<GetPortfolioByIdUseCase>();
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
+builder.Services.AddScoped<ObterDashboardUseCase>();
 // ---------------------------
 
 var app = builder.Build();
