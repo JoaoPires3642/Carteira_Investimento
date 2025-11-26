@@ -8,7 +8,7 @@ namespace InvestidorCarteira.Application.DTOs
         public DateTime Date { get; set; }
         public TipoAtivo Tipo { get; set; }
         public string Ticker { get; set; } = string.Empty;
-        public int Quantidade { get; set; }
+        public decimal Quantidade { get; set; }
         // Preço médio histórico da posição do usuário no momento da venda
         // (não é o preço da venda).
         public decimal PrecoMedioHistorico { get; set; }

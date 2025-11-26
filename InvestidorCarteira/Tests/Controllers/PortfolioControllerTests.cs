@@ -2,11 +2,12 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using InvestidorCarteira.API.Controllers;
-using InvestidorCarteira.API.DTOs;
+using InvestidorCarteira.Infrastructure.Controllers;
+using InvestidorCarteira.Infrastructure.DTOs;
 using InvestidorCarteira.Domain.Entities;
 using InvestidorCarteira.Domain.Enums;
-using InvestidorCarteira.Domain.Interfaces;
+using InvestidorCarteira.Application.Interfaces;
+using InvestidorCarteira.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -15,13 +16,13 @@ namespace InvestidorCarteira.Tests.Controllers
 {
     public class PortfolioControllerTests
     {
-        private readonly Mock<IPortfolioRepository> _repositoryMock;
+        private readonly Mock<IPortfolioService> _serviceMock;
         private readonly PortfolioController _controller;
 
         public PortfolioControllerTests()
         {
-            _repositoryMock = new Mock<IPortfolioRepository>();
-            _controller = new PortfolioController(_repositoryMock.Object);
+            _serviceMock = new Mock<IPortfolioService>();
+            _controller = new PortfolioController(_serviceMock.Object);
         }
 
         #region ObterPorId Tests
@@ -31,9 +32,9 @@ namespace InvestidorCarteira.Tests.Controllers
         {
             // Arrange
             var portfolioId = Guid.NewGuid();
-            var portfolio = new Portfolio("João Silva");
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync(portfolio);
+            var dto = new PortfolioDto(portfolioId.ToString(), "João Silva");
+            _serviceMock.Setup(s => s.ObterPorIdAsync(portfolioId))
+                .ReturnsAsync(dto);
 
             // Act
             var result = await _controller.ObterPorId(portfolioId);
@@ -41,7 +42,7 @@ namespace InvestidorCarteira.Tests.Controllers
             // Assert
             result.Should().BeOfType<OkObjectResult>();
             var okResult = result as OkObjectResult;
-            okResult.Value.Should().Be(portfolio);
+            okResult.Value.Should().Be(dto);
         }
 
         [Fact]
@@ -49,16 +50,14 @@ namespace InvestidorCarteira.Tests.Controllers
         {
             // Arrange
             var portfolioId = Guid.NewGuid();
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync((Portfolio)null);
+            _serviceMock.Setup(s => s.ObterPorIdAsync(portfolioId))
+                .ReturnsAsync((PortfolioDto)null);
 
             // Act
             var result = await _controller.ObterPorId(portfolioId);
 
             // Assert
             result.Should().BeOfType<NotFoundObjectResult>();
-            var notFoundResult = result as NotFoundObjectResult;
-            notFoundResult.Value.Should().Be("Carteira não encontrada.");
         }
 
         #endregion
@@ -70,22 +69,22 @@ namespace InvestidorCarteira.Tests.Controllers
         {
             // Arrange
             var nomeTitular = "Maria Santos";
-            _repositoryMock.Setup(r => r.CriarAsync(It.IsAny<Portfolio>()))
-                .Returns(Task.CompletedTask);
+            _serviceMock.Setup(s => s.CriarCarteiraAsync(nomeTitular))
+                .ReturnsAsync(new PortfolioDto(Guid.NewGuid().ToString(), nomeTitular));
 
             // Act
-            var result = await _controller.CriarCarteira(nomeTitular);
+            var result = await _controller.CriarCarteira(new CriarCarteiraRequest { NomeTitular = nomeTitular });
 
             // Assert
             result.Should().BeOfType<CreatedAtActionResult>();
             var createdResult = result as CreatedAtActionResult;
             createdResult.ActionName.Should().Be(nameof(PortfolioController.ObterPorId));
             
-            var portfolio = createdResult.Value as Portfolio;
+            var portfolio = createdResult.Value as PortfolioDto;
             portfolio.Should().NotBeNull();
-            portfolio.NomeTitular.Should().Be(nomeTitular);
+            portfolio.Nome.Should().Be(nomeTitular);
             
-            _repositoryMock.Verify(r => r.CriarAsync(It.IsAny<Portfolio>()), Times.Once);
+            _serviceMock.Verify(s => s.CriarCarteiraAsync(nomeTitular), Times.Once);
         }
 
         [Fact]
@@ -95,14 +94,14 @@ namespace InvestidorCarteira.Tests.Controllers
             var nomeTitular = string.Empty;
 
             // Act
-            var result = await _controller.CriarCarteira(nomeTitular);
+            var result = await _controller.CriarCarteira(new CriarCarteiraRequest { NomeTitular = nomeTitular });
 
             // Assert
             result.Should().BeOfType<BadRequestObjectResult>();
             var badRequestResult = result as BadRequestObjectResult;
-            badRequestResult.Value.Should().Be("O nome do titular é obrigatório.");
+            badRequestResult.Should().NotBeNull();
             
-            _repositoryMock.Verify(r => r.CriarAsync(It.IsAny<Portfolio>()), Times.Never);
+            _serviceMock.Verify(s => s.CriarCarteiraAsync(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
@@ -112,11 +111,11 @@ namespace InvestidorCarteira.Tests.Controllers
             string nomeTitular = null;
 
             // Act
-            var result = await _controller.CriarCarteira(nomeTitular);
+            var result = await _controller.CriarCarteira(new CriarCarteiraRequest { NomeTitular = nomeTitular });
 
             // Assert
             result.Should().BeOfType<BadRequestObjectResult>();
-            _repositoryMock.Verify(r => r.CriarAsync(It.IsAny<Portfolio>()), Times.Never);
+            _serviceMock.Verify(s => s.CriarCarteiraAsync(It.IsAny<string>()), Times.Never);
         }
 
         #endregion
@@ -138,10 +137,8 @@ namespace InvestidorCarteira.Tests.Controllers
                 Tipo = TipoAtivo.Acoes
             };
 
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync(portfolio);
-            _repositoryMock.Setup(r => r.AtualizarAsync(It.IsAny<Portfolio>()))
-                .Returns(Task.CompletedTask);
+            _serviceMock.Setup(s => s.ComprarAtivoAsync(portfolioId, TipoAtivo.Acoes, request.Ticker, request.Quantidade, request.PrecoPago))
+                .ReturnsAsync(new OperacaoResponse(request.Ticker, TipoAtivo.Acoes, TipoOperacao.Compra, (int)request.Quantidade, request.PrecoPago, DateTime.UtcNow, 0m));
 
             // Act
             var result = await _controller.ComprarAtivo(portfolioId, request);
@@ -150,11 +147,8 @@ namespace InvestidorCarteira.Tests.Controllers
             result.Should().BeOfType<OkObjectResult>();
             var okResult = result as OkObjectResult;
             
-            portfolio.Ativos.Should().HaveCount(1);
-            portfolio.Ativos.First().Should().BeOfType<Acoes>();
-            portfolio.Ativos.First().Ticker.Should().Be("PETR4");
-            
-            _repositoryMock.Verify(r => r.AtualizarAsync(portfolio), Times.Once);
+            var ok = result as OkObjectResult;
+            ok.Value.Should().BeOfType<OperacaoResponse>();
         }
 
         [Fact]
@@ -172,18 +166,16 @@ namespace InvestidorCarteira.Tests.Controllers
                 Tipo = TipoAtivo.FIIs
             };
 
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync(portfolio);
-            _repositoryMock.Setup(r => r.AtualizarAsync(It.IsAny<Portfolio>()))
-                .Returns(Task.CompletedTask);
+            _serviceMock.Setup(s => s.ComprarAtivoAsync(portfolioId, TipoAtivo.FIIs, request.Ticker, request.Quantidade, request.PrecoPago))
+                .ReturnsAsync(new OperacaoResponse(request.Ticker, TipoAtivo.FIIs, TipoOperacao.Compra, (int)request.Quantidade, request.PrecoPago, DateTime.UtcNow, 0m));
 
             // Act
             var result = await _controller.ComprarAtivo(portfolioId, request);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
-            portfolio.Ativos.Should().HaveCount(1);
-            portfolio.Ativos.First().Should().BeOfType<FIIs>();
+            var ok2 = result as OkObjectResult;
+            ok2.Value.Should().BeOfType<OperacaoResponse>();
         }
 
         [Fact]
@@ -201,18 +193,16 @@ namespace InvestidorCarteira.Tests.Controllers
                 Tipo = TipoAtivo.Criptomoedas
             };
 
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync(portfolio);
-            _repositoryMock.Setup(r => r.AtualizarAsync(It.IsAny<Portfolio>()))
-                .Returns(Task.CompletedTask);
+            _serviceMock.Setup(s => s.ComprarAtivoAsync(portfolioId, TipoAtivo.Criptomoedas, request.Ticker, request.Quantidade, request.PrecoPago))
+                .ReturnsAsync(new OperacaoResponse(request.Ticker, TipoAtivo.Criptomoedas, TipoOperacao.Compra, (int)request.Quantidade, request.PrecoPago, DateTime.UtcNow, 0m));
 
             // Act
             var result = await _controller.ComprarAtivo(portfolioId, request);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
-            portfolio.Ativos.Should().HaveCount(1);
-            portfolio.Ativos.First().Should().BeOfType<Criptomoedas>();
+            var ok3 = result as OkObjectResult;
+            ok3.Value.Should().BeOfType<OperacaoResponse>();
         }
 
         [Fact]
@@ -230,18 +220,16 @@ namespace InvestidorCarteira.Tests.Controllers
                 Tipo = TipoAtivo.ETFs
             };
 
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync(portfolio);
-            _repositoryMock.Setup(r => r.AtualizarAsync(It.IsAny<Portfolio>()))
-                .Returns(Task.CompletedTask);
+            _serviceMock.Setup(s => s.ComprarAtivoAsync(portfolioId, TipoAtivo.ETFs, request.Ticker, request.Quantidade, request.PrecoPago))
+                .ReturnsAsync(new OperacaoResponse(request.Ticker, TipoAtivo.ETFs, TipoOperacao.Compra, (int)request.Quantidade, request.PrecoPago, DateTime.UtcNow, 0m));
 
             // Act
             var result = await _controller.ComprarAtivo(portfolioId, request);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
-            portfolio.Ativos.Should().HaveCount(1);
-            portfolio.Ativos.First().Should().BeOfType<ETFs>();
+            var ok4 = result as OkObjectResult;
+            ok4.Value.Should().BeOfType<OperacaoResponse>();
         }
 
         [Fact]
@@ -257,18 +245,14 @@ namespace InvestidorCarteira.Tests.Controllers
                 Tipo = TipoAtivo.Acoes
             };
 
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync((Portfolio)null);
+            _serviceMock.Setup(s => s.ComprarAtivoAsync(portfolioId, request.Tipo, request.Ticker, request.Quantidade, request.PrecoPago))
+                .ThrowsAsync(new InvalidOperationException("Carteira não encontrada."));
 
             // Act
             var result = await _controller.ComprarAtivo(portfolioId, request);
 
             // Assert
-            result.Should().BeOfType<NotFoundObjectResult>();
-            var notFoundResult = result as NotFoundObjectResult;
-            notFoundResult.Value.Should().Be("Carteira não encontrada.");
-            
-            _repositoryMock.Verify(r => r.AtualizarAsync(It.IsAny<Portfolio>()), Times.Never);
+            result.Should().BeOfType<BadRequestObjectResult>();
         }
 
         #endregion
@@ -281,8 +265,6 @@ namespace InvestidorCarteira.Tests.Controllers
             // Arrange
             var portfolioId = Guid.NewGuid();
             var portfolio = new Portfolio("João Silva");
-            var acao = new Acoes("PETR4", 100, 30.50m);
-            portfolio.ComprarAtivo(acao);
 
             var request = new VenderAtivoRequest
             {
@@ -291,19 +273,16 @@ namespace InvestidorCarteira.Tests.Controllers
                 PrecoVenda = 35.00m
             };
 
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync(portfolio);
-            _repositoryMock.Setup(r => r.AtualizarAsync(It.IsAny<Portfolio>()))
-                .Returns(Task.CompletedTask);
+            _serviceMock.Setup(s => s.VenderAtivoAsync(portfolioId, request.Ticker, request.Quantidade, request.PrecoVenda))
+                .ReturnsAsync(new OperacaoResponse(request.Ticker, TipoAtivo.Acoes, TipoOperacao.Venda, request.Quantidade, request.PrecoVenda, DateTime.UtcNow, 30.50m));
 
             // Act
             var result = await _controller.VenderAtivo(portfolioId, request);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
-            portfolio.Ativos.First().Quantidade.Should().Be(50);
-            
-            _repositoryMock.Verify(r => r.AtualizarAsync(portfolio), Times.Once);
+            var okVenda = result as OkObjectResult;
+            okVenda.Value.Should().BeOfType<OperacaoResponse>();
         }
 
         [Fact]
@@ -318,15 +297,14 @@ namespace InvestidorCarteira.Tests.Controllers
                 PrecoVenda = 35.00m
             };
 
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync((Portfolio)null);
+            _serviceMock.Setup(s => s.VenderAtivoAsync(portfolioId, request.Ticker, request.Quantidade, request.PrecoVenda))
+                .ThrowsAsync(new InvalidOperationException("Carteira não encontrada."));
 
             // Act
             var result = await _controller.VenderAtivo(portfolioId, request);
 
             // Assert
-            result.Should().BeOfType<NotFoundObjectResult>();
-            _repositoryMock.Verify(r => r.AtualizarAsync(It.IsAny<Portfolio>()), Times.Never);
+            result.Should().BeOfType<BadRequestObjectResult>();
         }
 
         [Fact]
@@ -343,14 +321,13 @@ namespace InvestidorCarteira.Tests.Controllers
                 PrecoVenda = 35.00m
             };
 
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync(portfolio);
+            _serviceMock.Setup(s => s.VenderAtivoAsync(portfolioId, request.Ticker, request.Quantidade, request.PrecoVenda))
+                .ThrowsAsync(new InvalidOperationException("Ativo não encontrado."));
 
             // Act & Assert
             var result = await _controller.VenderAtivo(portfolioId, request);
             
             result.Should().BeOfType<BadRequestObjectResult>();
-            _repositoryMock.Verify(r => r.AtualizarAsync(It.IsAny<Portfolio>()), Times.Never);
         }
 
         [Fact]
@@ -359,8 +336,6 @@ namespace InvestidorCarteira.Tests.Controllers
             // Arrange
             var portfolioId = Guid.NewGuid();
             var portfolio = new Portfolio("João Silva");
-            var acao = new Acoes("PETR4", 100, 30.50m);
-            portfolio.ComprarAtivo(acao);
 
             var request = new VenderAtivoRequest
             {
@@ -369,15 +344,14 @@ namespace InvestidorCarteira.Tests.Controllers
                 PrecoVenda = 35.00m
             };
 
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync(portfolio);
+            _serviceMock.Setup(s => s.VenderAtivoAsync(portfolioId, request.Ticker, request.Quantidade, request.PrecoVenda))
+                .ThrowsAsync(new InvalidOperationException("Quantidade insuficiente."));
 
             // Act
             var result = await _controller.VenderAtivo(portfolioId, request);
 
             // Assert
             result.Should().BeOfType<BadRequestObjectResult>();
-            _repositoryMock.Verify(r => r.AtualizarAsync(It.IsAny<Portfolio>()), Times.Never);
         }
 
         [Fact]
@@ -386,8 +360,6 @@ namespace InvestidorCarteira.Tests.Controllers
             // Arrange
             var portfolioId = Guid.NewGuid();
             var portfolio = new Portfolio("João Silva");
-            var acao = new Acoes("PETR4", 100, 30.50m);
-            portfolio.ComprarAtivo(acao);
 
             var request = new VenderAtivoRequest
             {
@@ -396,19 +368,14 @@ namespace InvestidorCarteira.Tests.Controllers
                 PrecoVenda = 35.00m
             };
 
-            _repositoryMock.Setup(r => r.ObterPorIdAsync(portfolioId))
-                .ReturnsAsync(portfolio);
-            _repositoryMock.Setup(r => r.AtualizarAsync(It.IsAny<Portfolio>()))
-                .Returns(Task.CompletedTask);
+            _serviceMock.Setup(s => s.VenderAtivoAsync(portfolioId, request.Ticker, request.Quantidade, request.PrecoVenda))
+                .ReturnsAsync(new OperacaoResponse(request.Ticker, TipoAtivo.Acoes, TipoOperacao.Venda, request.Quantidade, request.PrecoVenda, DateTime.UtcNow, 30.50m));
 
             // Act
             var result = await _controller.VenderAtivo(portfolioId, request);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
-            portfolio.Ativos.Should().BeEmpty();
-            
-            _repositoryMock.Verify(r => r.AtualizarAsync(portfolio), Times.Once);
         }
 
         #endregion

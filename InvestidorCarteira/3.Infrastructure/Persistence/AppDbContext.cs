@@ -74,6 +74,10 @@ modelBuilder.Entity<Transacao>()
     modelBuilder.Entity<Transacao>()
         .Property(t => t.PrecoMedioNaData)
         .HasPrecision(18, 2);
+
+    modelBuilder.Entity<Transacao>()
+        .Property(t => t.Quantidade)
+        .HasPrecision(18, 8);
 }
         }
         

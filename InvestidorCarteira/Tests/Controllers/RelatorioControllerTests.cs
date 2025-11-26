@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
-using InvestidorCarteira.API.Controllers;
+using InvestidorCarteira.Infrastructure.Controllers;
 using InvestidorCarteira.Application.DTOs;
 using InvestidorCarteira.Application.Interfaces;
 using InvestidorCarteira.Domain.Enums;

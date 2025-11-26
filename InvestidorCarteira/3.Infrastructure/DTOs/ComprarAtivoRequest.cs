@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using InvestidorCarteira.Domain.Enums;
 
-namespace InvestidorCarteira.API.DTOs
+namespace InvestidorCarteira.Infrastructure.DTOs
 {
     public class ComprarAtivoRequest
     {
@@ -9,7 +9,6 @@ namespace InvestidorCarteira.API.DTOs
         public decimal Quantidade { get; set; }
         public decimal PrecoPago { get; set; }
 
-        // Recebemos o enum como string no JSON (ex.: "Acoes", "Criptomoedas")
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public required TipoAtivo Tipo { get; set; }
     }

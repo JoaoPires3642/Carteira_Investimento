@@ -52,7 +52,7 @@ namespace InvestidorCarteira.Domain.Entities
             novoAtivo.Ticker, 
             ObterTipoAtivo(novoAtivo), // Precisamos de um helper ou propriedade no Ativo para pegar o Enum
             TipoOperacao.Compra, 
-            (int)novoAtivo.Quantidade, // Ajustar cast se mudou para decimal
+            novoAtivo.Quantidade,
             novoAtivo.PrecoMedio,      // Na compra, o preço unitário é o preço pago
             pmAntesDaCompra            // PM antes de afetar
         );
@@ -61,7 +61,7 @@ namespace InvestidorCarteira.Domain.Entities
     }
 
     // MÉTODO DE VENDER (Atualizado)
-    public void VenderAtivo(string ticker, int quantidade, decimal precoVenda)
+    public void VenderAtivo(string ticker, decimal quantidade, decimal precoVenda)
     {
     var tickerNormalizado = ticker.ToUpper().Trim();
 

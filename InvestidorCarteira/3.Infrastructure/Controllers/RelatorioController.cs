@@ -1,7 +1,7 @@
 using InvestidorCarteira.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace InvestidorCarteira.API.Controllers
+namespace InvestidorCarteira.Infrastructure.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -14,7 +14,6 @@ namespace InvestidorCarteira.API.Controllers
             _useCase = useCase;
         }
 
-        // GET: api/relatorio/{idCarteira}/2023/10 (Outubro de 2023)
         [HttpGet("{portfolioId}/{ano}/{mes}")]
         public async Task<IActionResult> ObterRelatorioMensal(Guid portfolioId, int ano, int mes)
         {

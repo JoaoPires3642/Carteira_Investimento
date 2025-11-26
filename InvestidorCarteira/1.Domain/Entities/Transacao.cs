@@ -10,7 +10,7 @@ namespace InvestidorCarteira.Domain.Entities
         public TipoOperacao TipoOperacao { get; private set; } // Compra ou Venda
         public TipoAtivo TipoAtivo { get; private set; }       // Acao, FII, etc
         
-        public int Quantidade { get; private set; }
+        public decimal Quantidade { get; private set; }
         public decimal PrecoUnitario { get; private set; }     // Por quanto negociou
         public decimal Total => Quantidade * PrecoUnitario;
         
@@ -20,7 +20,7 @@ namespace InvestidorCarteira.Domain.Entities
         // Construtor privado para o EF Core
         protected Transacao() { }
 
-        public Transacao(string ticker, TipoAtivo tipoAtivo, TipoOperacao operacao, int quantidade, decimal precoUnitario, decimal precoMedioAtual)
+        public Transacao(string ticker, TipoAtivo tipoAtivo, TipoOperacao operacao, decimal quantidade, decimal precoUnitario, decimal precoMedioAtual)
         {
             Id = Guid.NewGuid();
             Data = DateTime.UtcNow; // Ou passar por parametro se quiser retroativo

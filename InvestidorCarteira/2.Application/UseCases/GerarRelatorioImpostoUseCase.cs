@@ -2,6 +2,9 @@ using InvestidorCarteira.Application.DTOs;
 using InvestidorCarteira.Application.Interfaces;
 using InvestidorCarteira.Domain.Enums;
 using InvestidorCarteira.Domain.Interfaces;
+using System.Linq;
+using System;
+using System.Threading.Tasks;
 
 namespace InvestidorCarteira.Application.UseCases
 {
