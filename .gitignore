@@ -24,3 +24,17 @@ node_modules/
 # Ignore local tool installs and config directories
 .tools/
 .Config/
+
+# Front-end (Next.js) artifacts
+**/.next/
+**/.turbo/
+**/out/
+**/.vercel/
+**/.eslintcache
+**/*.tsbuildinfo
+
+# Front-end env files (não versionar segredos)
+**/.env.local
+**/.env.development.local
+**/.env.production.local
+**/.env.test.local

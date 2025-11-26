@@ -30,6 +30,19 @@ builder.Services.AddSwaggerGen();
 // Conectamos sua Infraestrutura (Banco SQLite) na API
 builder.Services.AddInfrastructure(); 
 
+// CORS para permitir seu frontend na camada 4
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+        policy.WithOrigins(
+            "http://localhost:3000", // React
+            "http://localhost:5173", // Vite
+            "http://localhost:4200"  // Angular
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
+
 // Registra os UseCases
 builder.Services.AddScoped<ApuracaoMensalUseCase>();
 builder.Services.AddScoped<IGerarRelatorioImpostoUseCase, GerarRelatorioImpostoUseCase>();
@@ -43,6 +56,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseCors("FrontendPolicy");
 app.UseAuthorization();
 app.MapControllers();
 using (var scope = app.Services.CreateScope())
